@@ -22,7 +22,10 @@ p{margin:0 0 1rem}a{color:inherit}em{font-style:italic}button{font-family:inheri
 .hub{position:relative;min-height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:
   radial-gradient(rgba(180,150,165,.08) 1px, transparent 1px) 0 0/24px 24px,
   radial-gradient(130% 130% at 50% 22%, #fffdfe 0%, #fdf7fa 55%, #faf1f5 100%)}
-body.in-view .hub,body.in-view #landing,body.in-view .home-foot{display:none}
+body.in-view .hub,body.in-view #landing,body.in-view .home-foot,body.in-view .scroll-cue{display:none}
+.scroll-cue{position:fixed;bottom:20px;left:50%;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--soft);font-family:var(--mono);font-style:italic;font-size:.72rem;letter-spacing:.08em;z-index:6;pointer-events:none;transition:opacity .4s ease;animation:scrollcue 1.9s ease-in-out infinite}
+.scroll-cue.hide{opacity:0}
+@keyframes scrollcue{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 /* landing gallery + fly-in */
 #landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;padding:7vh clamp(18px,5vw,70px)}
 .galleryLand{display:flex;gap:16px;align-items:flex-start;width:100%;max-width:1120px;margin:0 auto}
@@ -120,7 +123,7 @@ background:radial-gradient(circle at center, transparent 68%, rgba(255,248,245,.
 .chip{font-family:var(--mono);font-size:.66rem;font-weight:600;color:var(--finch);background:rgba(200,143,24,.14);padding:2px 9px;border-radius:20px}
 
 /* research */
-.poster{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:start}
+.poster{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:start;margin-top:3rem}
 .poster__frame{display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .poster__frame:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(120,90,110,.18)}
 .poster__frame img{width:100%;display:block}
@@ -221,6 +224,7 @@ body.reduced .hub__name{position:relative;transform:none;flex-basis:100%;margin-
 <body>
 
 <section id="landing"><div class="galleryLand" id="galleryLand"></div><p class="ipline">All photos © Coco Xia; please ask before using: <a href="mailto:cocoxia@stanford.edu">cocoxia@stanford.edu</a></p></section>
+<div class="scroll-cue" id="scrollCue"></div>
 
 <section class="hub" id="hub">
   <div class="intro-copy">
@@ -504,6 +508,10 @@ buildCols(gallery,false);
 buildCols(gLand,true);
 function flyGallery(){gLand.classList.add('in');}
 let _rz;addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{buildCols(gallery,false);buildCols(gLand,false);gLand.classList.add('in');},200);});
+const scrollCue=document.getElementById('scrollCue');
+if(scrollCue){let lv='';for(let k=0;k<16;k++){const a=(k/16*360).toFixed(1);lv+=`<path d="M0 0 Q3 -1.5 6.5 0 Q3 1.5 0 0 Z" fill="rgba(214,150,180,.55)" stroke="rgba(198,120,158,.6)" stroke-width=".4" transform="rotate(${a} 36 36) translate(36 9)"/>`;}
+  scrollCue.innerHTML=`<svg width="56" height="56" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="23" fill="rgba(253,247,250,.85)"/><circle cx="36" cy="36" r="23" fill="none" stroke="rgba(198,120,158,.4)" stroke-width="1"/>${lv}<path d="M29 33 L36 40 L43 33" fill="none" stroke="#d24d74" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>scroll</span>`;}
+addEventListener('scroll',()=>{if(scrollCue)scrollCue.classList.toggle('hide',scrollY>120);},{passive:true});
 
 /* ---- clickable identity list (built empty, typed in sequence) ---- */
 const idlist=document.getElementById('idlist');
